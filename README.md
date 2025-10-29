@@ -10,5 +10,5 @@
   - locally, for smaller expression matrices, or
   - on an HPC cluster for large (genomic) data.  
 
-**See `consensusWorkflow.md` or (if you prefer) `consensusWorkflow.rmd` for instructions on running the analysis.**
+**See `consensusWorkflow.md` (or, if you prefer, `consensusWorkflow.rmd`) for instructions on running the analysis.**
 
