@@ -1,7 +1,7 @@
 Consensus Clustering Workflow
 ================
 Your Name
-2025-10-28
+2025-11-14
 
 # Overview
 
@@ -76,8 +76,13 @@ in your project folder:
 
 # Analysis setup
 
-Open the `<project_name>.R` file from your project folder and provide
-values for the consensus clustering arguments.
+***Open the `<project_name>.R` file from your project folder and provide
+values for the consensus clustering arguments.*** This is the most
+crucial step because these parameters determine the stability, number,
+and structure of the clusters you’ll discover. If you have mixed
+features (continuous and categorical), please feel free to write custom
+distance functions for the arguments `sample.dist.method` and
+`expr.dist.method`.
 
 Choose one of the following methods based on your computing environment:
 
@@ -87,7 +92,7 @@ Use this option for smaller datasets or when you want to run
 interactively. In the `<project_name>.R` file, execute the `source()`
 and `performConsensusClustering()` functions in your R session.
 
-Best part of local execution is that you  
+Advantage of local execution is that you  
 - can debug interactively when there’s an error - make changes you want
 in the code and see the outcome immediately! - don’t have a queue as in
 the cluster environment
