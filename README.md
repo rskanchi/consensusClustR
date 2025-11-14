@@ -12,3 +12,4 @@
 
 **See `consensusWorkflow.md` (or, if you prefer, `consensusWorkflow.rmd`) for instructions on running the analysis.**
 
+Right now the workflow is optimized for clustering expression (numeric) data. If you’ve got a mix of categorical and continuous features, you can plug in a custom distance function.
