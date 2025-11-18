@@ -98,7 +98,7 @@ performConsensusClustering <- function(exprFile, # expression data file with sam
     nVarexpr <- min(nVarexpr, ncol(data)) # all features will be included if the nVarexpr is greater than the number of features in the data
   }
   
-  sdExpr <- apply(data, 2, sd)
+  sdExpr <- apply(data, 2, sd, na.rm = TRUE)
   sdExpr <- sort(sdExpr, decreasing = TRUE)
   hvExpr <- names(sdExpr)[1:nVarexpr]
   data <- data[, hvExpr] # Get the expression data for the genes of interest (top 2000, 3000, etc.)
