@@ -24,5 +24,5 @@ performConsensusClustering(
   hclust.inner.linkage = "ward.D", # hierarchical linkage method for subsampling; "single", "complete", "average", "centroid"
   hclust.final.linkage = "ward.D", # hierarchical linkage method for consensus matrix
   corUse = "pairwise.complete.obs", # how to handle missing data in correlation distances
-  seed = 7654321, # seed for generating resampling indices
+  seed = 7654321 # seed for generating resampling indices
 )
