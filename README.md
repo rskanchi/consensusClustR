@@ -2,18 +2,6 @@
 
 [Consensus clustering](https://link.springer.com/article/10.1023/A:1023949509487) is a resampling-based method for discovering robust sample or feature clusters like stable patient subtypes and their (molecular) signatures. It addresses challenges in traditional clustering such as determining the correct number of clusters and assessing their stability.  
 
----
-
-This repo is an R workflow for performing consensus clustering using `ConsensusClusterPlus`   
-  - locally, for smaller expression matrices, or
-  - on an HPC cluster for large (genomic) data.  
-
-**See `consensusWorkflow.md` (or, if you prefer R, `consensusWorkflow.rmd`) for instructions on running the analysis.**
-
-Right now the workflow is optimized for clustering expression (numeric) data. If features include a mix of categorical and continuous features, you can plug in a custom distance function.  
-
----
-
 ## Interpreting Consensus Matrix, CDF, and Delta Area Plots
 
 Consensus clustering evaluates cluster stability across repeated (sample) sub-sampling to identify the optimal number of clusters (`K`). Three visualizations guide this decision:  
@@ -54,3 +42,12 @@ The y-axis represents additional gain in cluster stability obtained by increasin
 
 The optimal number of clusters is evaluated using all these plots and, in practice, they help narrow down the selection to 2-3 candidate `K` values. The final choice must be guided by biological relevance, cluster stability, and reasonable cluster sizes. Meaningful clusters would show distinct molecular or clinical patterns rather than small noisy subgroups.
 
+---
+
+This repo is an R workflow for performing consensus clustering using `ConsensusClusterPlus`   
+  - locally, for smaller expression matrices, or
+  - on an HPC cluster for large (genomic) data.  
+
+**See `consensusWorkflow.md` (or, if you prefer R, `consensusWorkflow.rmd`) for instructions on running the analysis.**
+
+Right now the workflow is optimized for clustering expression (numeric) data. If features include a mix of categorical and continuous features, you can plug in a custom distance function.  
