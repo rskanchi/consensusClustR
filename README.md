@@ -36,7 +36,7 @@ For small `K` (2-4), the curves are gradual and indicate poor separation. Optima
 
 The elbow plot shows the relative gain in cluster stability with increasing number of clusters `K`. It can help identify the point where adding more clusters stops providing meaningful improvements.
 
-![](docs/delta_area.png)  
+![](https://raw.githubusercontent.com/rskanchi/consensusClustR/main/docs/delta_area.png)  
 
 The y-axis represents additional gain in cluster stability obtained by increasing `K`. Larger values indicate substantial improvements in stability, whereas flattening of the curve (after elbow point) suggests diminishing improvements and that adding more clusters may not capture a meaningful data structure.  
 
