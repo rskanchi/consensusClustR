@@ -16,7 +16,7 @@ Right now the workflow is optimized for clustering expression (numeric) data. If
 
 ## Interpreting Consensus Matrix, CDF, and Delta Area Plots
 
-Consensus clustering evaluates cluster stability across repeated subsampling to identify the optimal number of clusters (`K`). Three visualizations guide this decision:  
+Consensus clustering evaluates cluster stability across repeated (sample) sub-sampling to identify the optimal number of clusters (`K`). Three visualizations guide this decision:  
 
 ### 1. Consensus matrix
 
@@ -25,7 +25,7 @@ The consensus matrix is a heatmap showing how frequently each pair of samples cl
 - **Values close to 0 (white)**: Sample pairs that *never* cluster together and clearly belong to different clusters   
 - **Intermediate values**: Sample pairs with ambiguous cluster membership   
 
-![sample consensus matrix](docs/consensus_matrix.png)   
+![](docs/consensus_matrix.png)   
 
 An ideal consensus matrix has a clear block-diagonal structure with distinct dark squares (stable clusters) and white off-diagonal regions (clear separation). Gradual color transitions indicate unstable or arbitrary cluster boundaries.  
 
@@ -33,7 +33,7 @@ An ideal consensus matrix has a clear block-diagonal structure with distinct dar
 
 The CDF plot shows the distribution of consensus values across all sample pairs for each `K` value.  
 
-![CDF Plot](docs/consensusCDF.png)
+![](docs/consensusCDF.png)
 
 The x-axis represents the consensus values from 0 (samples never cluster together) to 1 (always cluster together); and the y-axis (CDF, 0-1) shows the cumulative proportion of sample pairs with consensus ≤ x.
 
@@ -48,7 +48,7 @@ For small K (2-4), the curves are gradual and indicate poor separation. Optimal 
 
 The elbow plot shows the relative gain in cluster stability with increasing number of clusters `K`. It can help identify the point where adding more clusters stops providing meaningful improvements.
 
-![delta area](docs/delta_area.png)
+![](docs/delta_area.png)
 
 The y-axis represents additional gain in cluster stability obtained by increasing `K`. Larger values indicate substantial improvements in stability, whereas flattening of the curve (after elbow point) suggests diminishing improvements and that adding more clusters may not capture a meaningful data structure.  
 
