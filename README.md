@@ -25,7 +25,7 @@ The consensus matrix is a heatmap showing how frequently each pair of samples cl
 - **Values close to 0 (white)**: Sample pairs that *never* cluster together and clearly belong to different clusters   
 - **Intermediate values**: Sample pairs with ambiguous cluster membership   
 
-![sample](docs/consensus_matrix.png)   
+![](docs/consensus_matrix.png)   
 
 An ideal consensus matrix has a clear block-diagonal structure with distinct dark squares (stable clusters) and white off-diagonal regions (clear separation). Gradual color transitions indicate unstable or arbitrary cluster boundaries.  
 
@@ -33,7 +33,7 @@ An ideal consensus matrix has a clear block-diagonal structure with distinct dar
 
 The CDF plot shows the distribution of consensus values across all sample pairs for each `K` value.  
 
-![cdf](docs/consensusCDF.png)
+![](docs/consensusCDF.png)  
 
 The x-axis represents the consensus values from 0 (samples never cluster together) to 1 (always cluster together); and the y-axis (CDF, 0-1) shows the cumulative proportion of sample pairs with consensus ≤ x.
 
@@ -42,13 +42,13 @@ What do these curves mean?
 - **Initial rise + flat middle + final rise**: Ideal curve with many pairs at 0 (separate clusters), few pairs in the middle (minimal ambiguity) and many pairs at 1 (stable within-cluster associations).  
 - **Gradual, diagonal line**: Poor clustering; many intermediate consensus values showing samples don't consistently cluster together or separate.  
 
-For small K (2-4), the curves are gradual and indicate poor separation. Optimal `K` would be the first `K` where the curve becomes steep initially and is S-shaped. Beyond the optimal `K`, curves usually overlap, indicating diminishing returns (adding clusters doesn't improve stability).  
+For small `K` (2-4), the curves are gradual and indicate poor separation. Optimal `K` would be the first `K` where the curve becomes steep initially and is S-shaped. Beyond the optimal `K`, curves usually overlap, indicating diminishing returns (adding clusters doesn't improve stability).  
 
 ### 3. Delta area or elbow plot
 
 The elbow plot shows the relative gain in cluster stability with increasing number of clusters `K`. It can help identify the point where adding more clusters stops providing meaningful improvements.
 
-![delta](docs/delta_area.png)
+![](docs/delta_area.png)  
 
 The y-axis represents additional gain in cluster stability obtained by increasing `K`. Larger values indicate substantial improvements in stability, whereas flattening of the curve (after elbow point) suggests diminishing improvements and that adding more clusters may not capture a meaningful data structure.  
 
