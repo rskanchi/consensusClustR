@@ -12,7 +12,9 @@ performConsensusClustering <- function(exprFile, # expression data file with sam
                                        na.list = NULL,
                                        scaleExprData = TRUE, # column-wise scale expression data 
                                        nVarexpr = NULL, # optional number of highly variable expresion data features to include ex. 2000
-                                       annotColor = NULL, # colors for annotation of discrete traits
+                                       annotColor = NULL, # REQUIRED when you specify discrete traits; colors for annotation of discrete trait levels
+                                                          # list("DiscreteTrait1" = c("level1" = "#F0E442", "level2" = "#CC79A7"), 
+                                                          #       "DiscreteTrait2" = c("level1" = "#0072B2", "level2" = "#009E73")),
                                        # clustering options for rows/samples
                                        maxK.sample = 8, # number of sample clusters to be evaluated, from 2 to maxK.sample
                                        maxK.expr = 8, # number of expr clusters to be evaluated, from 2 to maxK.expr
