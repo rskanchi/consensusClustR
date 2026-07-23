@@ -34,7 +34,7 @@ performConsensusClustering <- function(exprFile, # expression data file with sam
   
   # install the R packages not already installed and load all the required R packages
   list.of.packages <- c("ConsensusClusterPlus", "ggplot2", "clustree", "circlize",
-                        "dendextend", "ggstatsplot", "gginnards")
+                        "dendextend", "ggstatsplot", "gginnards", "RColorBrewer")
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
   if(length(new.packages)>0) {install.packages(new.packages)} else {lapply(list.of.packages, require, character.only = TRUE)}
   
@@ -176,7 +176,8 @@ performConsensusClustering <- function(exprFile, # expression data file with sam
             geom_violin(trim = FALSE, aes(fill = cluster)) +
             xlab(paste("ANOVA Pr(>F):", format(temp.aov[[1]]$`Pr(>F)`[1], scientific = TRUE, digits = 3))) + ylab(cont) +
             #          labs(title = paste("ANOVA Pr(>F):", format(temp.aov[[1]]$`Pr(>F)`[1], scientific = TRUE, digits = 3))) +
-            scale_fill_manual(values = sampleConsensus[[kCol]]$clrs[[3]]) +
+            #scale_fill_manual(values = sampleConsensus[[kCol]]$clrs[[3]]) +
+            scale_fill_manual(values = get.maxKColors(sampleConsensus[[kCol]]$clrs[[3]], kCol)) +
             theme_classic(20))
         }) # end of lapply
       } # end of continuousTraits
@@ -200,7 +201,8 @@ performConsensusClustering <- function(exprFile, # expression data file with sam
       
       dev.off()
       
-      clust.col <- sampleConsensus[[kCol]]$clrs[[3]]
+      # clust.col <- sampleConsensus[[kCol]]$clrs[[3]] 
+      clust.col <- get.maxKColors(sampleConsensus[[kCol]]$clrs[[3]], kCol)
       names(clust.col) <- 1:length(clust.col)
       if (is.null(get0("annotColor"))) annotColor <- list("cluster" = clust.col) else annotColor$cluster <- clust.col
       
@@ -233,8 +235,15 @@ performConsensusClustering <- function(exprFile, # expression data file with sam
       write.csv(rownames(data)[sampleConsensus[[kCol]]$consensusTree$order], file = paste(heatfolder, "heatColOrder.csv", sep = "/"), row.names = TRUE)
       write.csv(colnames(data)[exprConsensus[[kRow]]$consensusTree$order], file = paste(heatfolder, "heatRowOrder.csv", sep = "/"), row.names = TRUE)
       
-      write.csv(data.frame("clusterColor" = sampleConsensus[[kCol]]$clrs[[3]]), file = paste(heatfolder, "sampleClusterColors.csv", sep = "/"), row.names = TRUE)
-      write.csv(data.frame("clusterColor" = exprConsensus[[kRow]]$clrs[[3]]), file = paste(heatfolder, "exprClusterColors.csv", sep = "/"), row.names = TRUE)
+      # get.maxKColors
+      #write.csv(data.frame("clusterColor" = sampleConsensus[[kCol]]$clrs[[3]]), 
+      #          file = paste(heatfolder, "sampleClusterColors.csv", sep = "/"), row.names = TRUE)
+      #write.csv(data.frame("clusterColor" = exprConsensus[[kRow]]$clrs[[3]]), 
+      #          file = paste(heatfolder, "exprClusterColors.csv", sep = "/"), row.names = TRUE)
+      write.csv(data.frame("clusterColor" = get.maxKColors(sampleConsensus[[kCol]]$clrs[[3]], kCol)), 
+                file = paste(heatfolder, "sampleClusterColors.csv", sep = "/"), row.names = TRUE)
+      write.csv(data.frame("clusterColor" = get.maxKColors(exprConsensus[[kRow]]$clrs[[3]], kRow)), 
+                file = paste(heatfolder, "exprClusterColors.csv", sep = "/"), row.names = TRUE)
     } # end of for in kCol
   } # end of for in kRow
   cat(getTime(), " Heatmaps DONE", "\n", sep = "")
@@ -285,3 +294,20 @@ getConsensusClusters <- function(d, folder, dist.method = "spearman", clusterAlg
 
 # get time
 getTime <- function(){paste0("[", format(Sys.time(), usetz = T), "]")}
+
+# ConsensusClusterPlus() draws cluster colors from a fixed internal palette of only 25 colors, shared cumulatively across the whole k sweep
+# At high maxK, that shared pool can run dry before reaching the requested k - clrs[[3]] then comes back with fewer unique colors 
+# than there are actual clusters, which crashes HeatmapAnnotation() 
+# the function below helps generate the required numebr of colors
+
+get.maxKColors <- function(clrsVec, k){
+  if (length(unique(clrsVec)) == k) return(clrsVec)
+  
+  warning("ConsensusClusterPlus ran out of distinct colors at k = ", k,
+          " (only ", length(unique(clrsVec)), " unique colors available). ",
+          "Generating a", k, "-color palette.")
+  
+  basePal <- RColorBrewer::brewer.pal(min(k, 12), "Paired")
+  if (k <= 12) return(basePal[1:k])
+  return(colorRampPalette(basePal)(k))
+} # end of get.maxKColors
