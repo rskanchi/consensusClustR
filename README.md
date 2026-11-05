@@ -42,9 +42,9 @@ The delta-area plot shows the relative gain in the area under the CDF curve as t
 
 The y-axis represents the relative change in CDF area compared with the previous `K` (for `K ≥ 3`). The value at `K = 2` represents the CDF area itself. Larger values indicate substantial improvements in stability, whereas flattening of the curve suggests diminishing improvements and that adding more clusters may not capture a meaningful data structure.  
 
-**Example interpretation:** In the plot above, `K = 3, 4, 5` were considered candidate solutions based on the delta-area curve. Examination of the consensus matrices and expression heatmaps supported `K = 4,5`. The final selection of `K = 5` was informed by clinical characteristics and survival analyses.  
+**Example interpretation:** In the plot above, `K = 3, 4, 5` were considered candidate solutions based on the delta-area curve. Examination of the consensus matrices and expression heatmaps supported `K = 4, 5`. The final selection of `K = 5` was informed by clinical characteristics and survival analyses.  
 
-The optimal number of clusters is evaluated using all these plots and, in practice, they help narrow down the selection to 2-3 candidate `K` values. The final choice must be guided by biological relevance, cluster stability, and reasonable cluster sizes. Meaningful clusters would show distinct molecular or clinical patterns rather than small noisy subgroups.
+The optimal number of clusters is evaluated using all these plots and, in practice, they help narrow down the selection to 2 or 3 candidate `K` values. The final choice must be guided by biological relevance, cluster stability, and reasonable cluster sizes. Meaningful clusters would show distinct molecular or clinical patterns rather than small noisy subgroups.
 
 ---
 
