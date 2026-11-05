@@ -89,7 +89,12 @@ performConsensusClustering <- function(exprFile, # expression data file with sam
   data <- data[commonSamples, ]
   traitData <- traitData[commonSamples, ,drop=F]
   
-  
+  # prevent unused factor levels from appearing after sample filtering
+  if (!is.null(discreteTraits)) {
+    for (disc in discreteTraits) {
+      traitData[[disc]] <- droplevels(traitData[[disc]])
+    }}
+
   # check expression and clinical data samples are in the same order
   #identical(rownames(traitData), rownames(data))
   cat(getTime(), " Number of samples (after preprocessing): ",nrow(data), "\n", sep = "")
@@ -123,7 +128,29 @@ performConsensusClustering <- function(exprFile, # expression data file with sam
     data <- data.frame(scale(data), check.names = F)
     write.csv(data, paste(outputFolder, "data/expr_data_scaled.csv",sep = "/"), row.names = TRUE)
   } 
-  
+  # Generate colors for discrete traits if not supplied by the user
+  if (!is.null(discreteTraits)) {
+    if (is.null(annotColor)) annotColor <- list()
+    for (disc in discreteTraits) {
+      traitLevels <- levels(traitData[[disc]])
+      if (is.null(annotColor[[disc]])) {
+        # Generate distinct colors automatically
+        traitColors <- grDevices::hcl.colors(
+          n = length(traitLevels),
+          palette = "Dark 3"
+        )
+        names(traitColors) <- traitLevels
+        annotColor[[disc]] <- traitColors
+      } else {
+        # Verify that supplied colors cover all observed levels
+        missingLevels <- setdiff(traitLevels, names(annotColor[[disc]]))
+        if (length(missingLevels) > 0) {
+          stop("Missing annotation colors for trait '", disc,"': ", paste(missingLevels, collapse = ", "))
+        } # end of if for missingLevels 
+      } # end of else for annotColor[[disc]]
+    } # end of for loop over discreteTraits
+  } # end of if in !is.null(discreteTraits)
+
   # consensus clustering - samples
   cat(getTime(), " Sample consensus clustering in progress..", "\n", sep = "")
   sampleConsensus <- getConsensusClusters(d = t(data), dist.method = sample.dist.method, clusterAlg = clusterAlg, 
@@ -148,9 +175,12 @@ performConsensusClustering <- function(exprFile, # expression data file with sam
   heat <- list()
   
   # depending on the scaling, take care of the color scheme
-  #cellColor <- colorRamp2(c(min(data), median(data), max(data)), c("blue", "white", "red")) # all heatmaps will have the same color limits
-  
-  cellColor <- colorRamp2(c(min(data), 0, max(data)), c("blue", "white", "red")) # all heatmaps will have the same color limits
+  # heatmap center will be at the median of the data; and min and max will be the limits
+  #cellColor <- colorRamp2(c(min(data, na.rm = TRUE), median(data, na.rm = TRUE), max(data, na.rm = TRUE)), c("blue", "white", "red")) 
+  # heatmap center will be 0; and the limits are -10 to +10
+  #cellColor <- colorRamp2(c(-10, 0, 10), c("blue", "white", "red")) 
+  # heatmap center will be 0; and min and max will be the limits
+  cellColor <- colorRamp2(c(min(data, na.rm = TRUE), 0, max(data, na.rm = TRUE)), c("blue", "white", "red")) 
 
     
   for (kRow in 2:maxK.expr){
@@ -166,19 +196,36 @@ performConsensusClustering <- function(exprFile, # expression data file with sam
       # discrete and continuous trait differences across clusters
       traitData$cluster <- sampleConsensus[[kCol]]$consensusClass
       traitData$cluster <- factor(traitData$cluster)
-      pdf(paste(heatfolder, paste(heatmapName, "_traitData_Violin_and_Bar_plots.pdf", sep =""), sep = "/"))
-      # violin plots for continuous traits
+      # pdf(paste(heatfolder, paste(heatmapName, "_traitData_Violin_and_Bar_plots.pdf", sep =""), sep = "/"))
+      # # violin plots for continuous traits
+      # if(!is.null(continuousTraits)){
+      #   lapply(continuousTraits, FUN = function(cont){
+      #     temp.aov <- summary(aov(traitData[, cont] ~ traitData[, "cluster"] , data = traitData))
+      #     print(
+      #     ggplot(traitData, aes(x = traitData[, "cluster"], y = traitData[, cont])) +
+      #       geom_violin(trim = FALSE, aes(fill = cluster)) +
+      #       xlab(paste("ANOVA Pr(>F):", format(temp.aov[[1]]$`Pr(>F)`[1], scientific = TRUE, digits = 3))) + ylab(cont) +
+      #       #          labs(title = paste("ANOVA Pr(>F):", format(temp.aov[[1]]$`Pr(>F)`[1], scientific = TRUE, digits = 3))) +
+      #       #scale_fill_manual(values = sampleConsensus[[kCol]]$clrs[[3]]) +
+      #       scale_fill_manual(values = get.maxKColors(sampleConsensus[[kCol]]$clrs[[3]], kCol)) +
+      #       theme_classic(20))
+      #   }) # end of lapply
+      # } # end of continuousTraits
+      
+      pdf(paste(heatfolder, paste(heatmapName, "_traitData_Box_and_Bar_plots.pdf", sep =""), sep = "/"))
+      # box plots for continuous traits
       if(!is.null(continuousTraits)){
         lapply(continuousTraits, FUN = function(cont){
           temp.aov <- summary(aov(traitData[, cont] ~ traitData[, "cluster"] , data = traitData))
           print(
-          ggplot(traitData, aes(x = traitData[, "cluster"], y = traitData[, cont])) +
-            geom_violin(trim = FALSE, aes(fill = cluster)) +
-            xlab(paste("ANOVA Pr(>F):", format(temp.aov[[1]]$`Pr(>F)`[1], scientific = TRUE, digits = 3))) + ylab(cont) +
-            #          labs(title = paste("ANOVA Pr(>F):", format(temp.aov[[1]]$`Pr(>F)`[1], scientific = TRUE, digits = 3))) +
-            #scale_fill_manual(values = sampleConsensus[[kCol]]$clrs[[3]]) +
-            scale_fill_manual(values = get.maxKColors(sampleConsensus[[kCol]]$clrs[[3]], kCol)) +
-            theme_classic(20))
+            ggplot(traitData, aes(x = traitData[, "cluster"], y = traitData[, cont])) +
+              geom_boxplot(aes(fill = cluster), outlier.shape = NA) +
+              geom_jitter(width = 0.15, alpha = 0.4, size = 1) +
+              xlab(paste("ANOVA Pr(>F):", format(temp.aov[[1]]$`Pr(>F)`[1], scientific = TRUE, digits = 3))) + ylab(cont) +
+              #          labs(title = paste("ANOVA Pr(>F):", format(temp.aov[[1]]$`Pr(>F)`[1], scientific = TRUE, digits = 3))) +
+              #scale_fill_manual(values = sampleConsensus[[kCol]]$clrs[[3]]) +
+              scale_fill_manual(values = get.maxKColors(sampleConsensus[[kCol]]$clrs[[3]], kCol)) +
+              theme_classic(20))
         }) # end of lapply
       } # end of continuousTraits
       
@@ -203,8 +250,10 @@ performConsensusClustering <- function(exprFile, # expression data file with sam
       
       # clust.col <- sampleConsensus[[kCol]]$clrs[[3]] 
       clust.col <- get.maxKColors(sampleConsensus[[kCol]]$clrs[[3]], kCol)
-      names(clust.col) <- 1:length(clust.col)
-      if (is.null(get0("annotColor"))) annotColor <- list("cluster" = clust.col) else annotColor$cluster <- clust.col
+      names(clust.col) <- as.character(seq_len(kCol))
+      annotColor$cluster <- clust.col
+      #names(clust.col) <- 1:length(clust.col)
+      #if (is.null(get0("annotColor"))) annotColor <- list("cluster" = clust.col) else annotColor$cluster <- clust.col
       
       annotBar <- HeatmapAnnotation(df = traitData, which = "column", col = annotColor,
                                     simple_anno_size = unit(0.3, "cm")) #, col = annotColor
