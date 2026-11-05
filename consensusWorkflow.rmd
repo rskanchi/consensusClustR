@@ -64,16 +64,16 @@ Go to the project folder and customize template files.
 setwd(project_name)
 
 # Update SLURM script with project name
-shFile <- readLines("template.slurm.sh", warn = FALSE)
+shFile <- readLines(paste0(project_name, "/template.slurm.sh"), warn = FALSE)
 shFile2 <- gsub(pattern = "project_name", replace = project_name, x = shFile)
-writeLines(shFile2, con = paste0(project_name, ".slurm.sh"))
+writeLines(shFile2, con = paste0(paste0(project_name, "/", project_name, ".slurm.sh")))
 
 # Rename template R script
-file.rename(from = "template.R", to = paste0(project_name, ".R"))
+file.rename(from = paste0(project_name, "/", "template.R"), to = paste0(project_name, "/", project_name, ".R"))
 
 # Clean up 
-file.remove("template.slurm.sh")
-rm(shFile, shFile2)
+file.remove(paste0(project_name, "/template.slurm.sh"))
+rm(shFile, shFile2) # environment
 
 ```
 
